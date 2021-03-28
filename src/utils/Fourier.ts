@@ -1,4 +1,3 @@
-import { assert } from "node:console";
 import {Vector, Point} from "./Geometry";
 
 export const THRESHOLD = 1e-7;
@@ -18,7 +17,7 @@ export default class Fourier {
     frameLength: number;
 
     constructor(fourier_coefs: Array<{real:number, imag: number}>, maxN:number, baseFrequency:number, frameLength: number) {
-        assert(maxN*2+1 === fourier_coefs.length);
+        // assert(maxN*2+1 === fourier_coefs.length);
         this.maxN = maxN;
         this.baseFrequency = baseFrequency;
         this.frameLength = frameLength;
