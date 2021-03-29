@@ -25,7 +25,10 @@ export default class Fourier {
         // c_0
         this.vectors.push(new Vector(fourier_coefs[0].real, fourier_coefs[0].imag, 0));
         for (let i = 1; i <= maxN; i++) {
-            if (Math.abs(fourier_coefs[2*i-1].real) > THRESHOLD || Math.abs(fourier_coefs[2*i-1].imag) > THRESHOLD) {
+            let c_n_real = (Math.abs(fourier_coefs[2*i-1].real) > THRESHOLD) ? fourier_coefs[2*i-1].real:0;
+            let c_n_imag =  (Math.abs(fourier_coefs[2*i-1].imag) > THRESHOLD) ? fourier_coefs[2*i-1].imag:0;
+            
+            if (c_n_real !== 0 || c_n_imag !== 0) {
                 // c_n 
                 this.vectors.push(new Vector(
                     fourier_coefs[2*i-1].real,
@@ -33,7 +36,10 @@ export default class Fourier {
                     i*baseFrequency*Math.PI));
             }
             
-            if (Math.abs(fourier_coefs[2*i].real) > THRESHOLD || Math.abs(fourier_coefs[2*i].imag) > THRESHOLD) {
+            let c_neg_real = (Math.abs(fourier_coefs[2*i].real) > THRESHOLD) ? fourier_coefs[2*i].real:0;
+            let c_neg_imag =  (Math.abs(fourier_coefs[2*i].imag) > THRESHOLD) ? fourier_coefs[2*i].imag:0;
+
+            if (c_neg_real !== 0 || c_neg_imag !== 0) {
                 // c_-n
                 this.vectors.push(new Vector(
                     fourier_coefs[2*i].real,
