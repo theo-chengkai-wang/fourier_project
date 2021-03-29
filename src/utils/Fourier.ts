@@ -7,20 +7,17 @@ export const THRESHOLD = 1e-7;
  * @property vectors: array of current Fourier vectors
  * @property maxN: max N for the Fourier series expansion
  * @property baseFrequency: number of cycles per second for the first rotating arrow. 
- * @property frameLength: length of each frame (each timeout set) before next render. 
  */
 
 export default class Fourier {
     vectors: Array<Vector>;
     maxN: number; 
     baseFrequency: number; // Number of cycles per second.
-    frameLength: number;
 
-    constructor(fourier_coefs: Array<{real:number, imag: number}>, maxN:number, baseFrequency:number, frameLength: number) {
+    constructor(fourier_coefs: Array<{real:number, imag: number}>, maxN:number, baseFrequency:number) {
         // assert(maxN*2+1 === fourier_coefs.length);
         this.maxN = maxN;
         this.baseFrequency = baseFrequency;
-        this.frameLength = frameLength;
         this.vectors = new Array<Vector>();
         // c_0
         this.vectors.push(new Vector(fourier_coefs[0].real, fourier_coefs[0].imag, 0));
@@ -60,9 +57,12 @@ export default class Fourier {
         return points;
     }
 
-    nextFrame() {
+    /**
+     * Computes next frame after [frameLength] seconds and updates the Fourier object
+     */
+    nextFrame(frameLength: number) {
         for (let i = 0; i < this.vectors.length; i++) {
-            this.vectors[i].rotate(this.frameLength);
+            this.vectors[i].rotate(frameLength);
         }
     }
 
