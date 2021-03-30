@@ -10,12 +10,11 @@ export type AnimatedCanvasProps = {
     // points: Array<Point>;
     draw: (ctx: CanvasRenderingContext2D, canvas:HTMLCanvasElement, progress: number, frameLength: number) => void;
     backgroundDraw: (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => void;
-    width: number; 
-    height: number;
     animate: boolean;
+    options: React.HTMLProps<HTMLCanvasElement>
 };
 
-export default function AnimatedCanvas({ draw, backgroundDraw, width, height, animate }: AnimatedCanvasProps) {
+export default function AnimatedCanvas({ draw, backgroundDraw, animate, options }: AnimatedCanvasProps) {
     const ref = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -59,6 +58,6 @@ export default function AnimatedCanvas({ draw, backgroundDraw, width, height, an
     }, [animate, draw]);
 
     return (
-        <canvas ref={ref} width={`${width}px`} height={`${height}px`}/>
+        <canvas ref={ref} {...options}/>
     );
 } 

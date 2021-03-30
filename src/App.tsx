@@ -1,422 +1,86 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { Point } from "./utils/Geometry";
+import { CanvasPoint, Point, getPointFromCanvasPoint } from "./utils/Geometry";
 import ReadOnlyCanvas from "./components/ReadOnlyCanvas";
-import Fourier from "./utils/Fourier";
+import Fourier, {Complex} from "./utils/Fourier";
 import AnimatedCanvas from "./components/AnimatedCanvas";
+import WriteOnlyCanvas from "./components/WriteOnlyCanvas";
+import axios, { AxiosResponse } from "axios";
 
-let f_points = [
-    {
-        imag: 0,
-        real: 50,
-    },
-    {
-        imag: 1.6178725026350093e-15,
-        real: 50,
-    },
-    {
-        imag: 3.903127820947816e-17,
-        real: 2.7755575615628914e-16,
-    },
-    {
-        imag: 10,
-        real: -7.424616477180734e-16,
-    },
-    {
-        imag: 5.551115123125783e-17,
-        real: 2.393918396847994e-16,
-    },
-    {
-        imag: 4.92227786308419e-17,
-        real: -4.544975507059235e-16,
-    },
-    {
-        imag: 5.0306980803327406e-17,
-        real: 1.5959455978986625e-16,
-    },
-    {
-        imag: -8.391724815037804e-17,
-        real: -1.5092094240998222e-16,
-    },
-    {
-        imag: -1.2533377113932431e-16,
-        real: 2.0122792321330962e-16,
-    },
-    {
-        imag: 7.806255641895632e-18,
-        real: -2.498001805406602e-16,
-    },
-    {
-        imag: -2.168404344971009e-17,
-        real: 1.0408340855860843e-16,
-    },
-    {
-        imag: 9.454242944073599e-17,
-        real: -1.5092094240998222e-16,
-    },
-    {
-        imag: -2.0729945537922845e-16,
-        real: 7.45931094670027e-17,
-    },
-    {
-        imag: 1.1752751549742868e-16,
-        real: -2.5847379792054426e-16,
-    },
-    {
-        imag: 2.5066754227864863e-16,
-        real: -4.874572967494828e-16,
-    },
-    {
-        imag: 1.9168694409543718e-16,
-        real: -1.7520707107365752e-16,
-    },
-    {
-        imag: 3.426078865054194e-16,
-        real: -5.204170427930421e-18,
-    },
-    {
-        imag: 4.0766001685454967e-17,
-        real: -4.839878497975292e-16,
-    },
-    {
-        imag: -1.240327285323417e-16,
-        real: -8.673617379884035e-17,
-    },
-    {
-        imag: -2.749536709423239e-16,
-        real: -1.3877787807814457e-16,
-    },
-    {
-        imag: 1.5785983631388945e-16,
-        real: 4.423544863740858e-17,
-    },
-    {
-        imag: 1.5092094240998222e-16,
-        real: -3.2786273695961654e-16,
-    },
-    {
-        imag: -3.469446951953614e-17,
-        real: 3.226585665316861e-16,
-    },
-    {
-        imag: -2.5066754227864863e-16,
-        real: -1.214306433183765e-17,
-    },
-    {
-        imag: 9.80118763926896e-17,
-        real: -1.231653667943533e-16,
-    },
-    {
-        imag: 7.806255641895632e-17,
-        real: -1.2836953722228372e-16,
-    },
-    {
-        imag: 4.657732532997727e-16,
-        real: 2.5413698923060224e-16,
-    },
-    {
-        imag: -1.5959455978986625e-16,
-        real: 2.96637714392034e-16,
-    },
-    {
-        imag: 2.7929047963226594e-16,
-        real: 7.19910242530375e-17,
-    },
-    {
-        imag: -6.678685382510707e-17,
-        real: -2.2811613709095013e-16,
-    },
-    {
-        imag: -5.0306980803327406e-17,
-        real: -5.984795992119984e-17,
-    },
-    {
-        imag: -6.609296443471635e-16,
-        real: 3.0357660829594124e-17,
-    },
-    {
-        imag: -5.93275428784068e-16,
-        real: 1.457167719820518e-16,
-    },
-    {
-        imag: -9.020562075079397e-17,
-        real: 1.734723475976807e-16,
-    },
-    {
-        imag: 1.0061396160665481e-16,
-        real: 5.134781488891349e-16,
-    },
-    {
-        imag: 3.157196726277789e-16,
-        real: 8.500145032286355e-17,
-    },
-    {
-        imag: -2.0990154059319366e-16,
-        real: 2.6020852139652106e-17,
-    },
-    {
-        imag: -1.3877787807814457e-16,
-        real: -1.3704315460216776e-16,
-    },
-    {
-        imag: 3.2959746043559335e-17,
-        real: -1.3530843112619095e-15,
-    },
-    {
-        imag: 1.734723475976807e-17,
-        real: -4.336808689942018e-19,
-    },
-    {
-        imag: -3.469446951953614e-18,
-        real: -7.32920668600201e-17,
-    },
-    {
-        imag: 1.0581813203458523e-16,
-        real: -3.5518463170625125e-16,
-    },
-    {
-        imag: -1.5439038936193583e-16,
-        real: -1.1058862159352145e-17,
-    },
-    {
-        imag: 3.157196726277789e-16,
-        real: 1.734723475976807e-18,
-    },
-    {
-        imag: -7.650130529057719e-16,
-        real: -3.677613769070831e-16,
-    },
-    {
-        imag: -3.191891195797325e-16,
-        real: -1.212138028838794e-16,
-    },
-    {
-        imag: 2.1337098754514727e-16,
-        real: -4.122136659789888e-16,
-    },
-    {
-        imag: 2.480654570646834e-16,
-        real: 7.068998164605489e-17,
-    },
-    {
-        imag: 3.9898639947466563e-16,
-        real: 2.0421164759198973e-16,
-    },
-    {
-        imag: -1.3357370765021415e-16,
-        real: -4.675079767757495e-16,
-    },
-    {
-        imag: 1.457167719820518e-16,
-        real: 5.772292366312826e-16,
-    },
-    {
-        imag: -1.9081958235744878e-16,
-        real: -6.404599073306372e-16,
-    },
-    {
-        imag: 1.5439038936193583e-16,
-        real: 7.827939685345342e-17,
-    },
-    {
-        imag: -5.117434254131581e-16,
-        real: -1.1926223897340549e-18,
-    },
-    {
-        imag: -3.2959746043559335e-17,
-        real: 3.462941738918701e-16,
-    },
-    {
-        imag: -1.1102230246251565e-16,
-        real: 7.24247051220317e-17,
-    },
-    {
-        imag: 1.474514954580286e-16,
-        real: -4.3194614551822497e-16,
-    },
-    {
-        imag: -3.0010716134398763e-16,
-        real: 6.012985248604608e-16,
-    },
-    {
-        imag: 5.499073418846478e-16,
-        real: -1.8214596497756474e-17,
-    },
-    {
-        imag: 9.939965517347105e-16,
-        real: -7.43762690325056e-16,
-    },
-    {
-        imag: 8.604228440844963e-16,
-        real: -9.315465065995454e-16,
-    },
-    {
-        imag: 1.734723475976807e-17,
-        real: -2.3418766925686896e-16,
-    },
-    {
-        imag: 5.84601811404184e-16,
-        real: 8.838416110101832e-16,
-    },
-    {
-        imag: -4.3368086899420177e-16,
-        real: -2.8709673527416157e-16,
-    },
-    {
-        imag: -4.458239333260394e-16,
-        real: -2.6107588313450947e-16,
-    },
-    {
-        imag: 1.734723475976807e-17,
-        real: 6.080205783298709e-16,
-    },
-    {
-        imag: -4.145989107584569e-16,
-        real: 4.3021142204224816e-16,
-    },
-    {
-        imag: 8.795048023202412e-16,
-        real: -2.8102520310824275e-16,
-    },
-    {
-        imag: 1.9081958235744878e-16,
-        real: 5.811323644522304e-17,
-    },
-    {
-        imag: 2.185751579730777e-16,
-        real: 6.409803243734302e-16,
-    },
-    {
-        imag: 4.44956571588051e-16,
-        real: -3.3133218391157016e-16,
-    },
-    {
-        imag: 2.7755575615628914e-17,
-        real: 2.992397996059992e-16,
-    },
-    {
-        imag: 1.9949319973733282e-17,
-        real: -2.2985086056692694e-16,
-    },
-    {
-        imag: -1.6653345369377348e-16,
-        real: -8.673617379884035e-18,
-    },
-    {
-        imag: -2.862293735361732e-17,
-        real: 1.9081958235744878e-16,
-    },
-    {
-        imag: -4.996003610813204e-16,
-        real: 2.0816681711721685e-17,
-    },
-    {
-        imag: 1.214306433183765e-15,
-        real: 7.771561172376096e-16,
-    },
-    {
-        imag: 2.3418766925686896e-17,
-        real: -6.227657278756737e-16,
-    },
-    {
-        imag: 4.85722573273506e-17,
-        real: -6.643990912991171e-16,
-    },
-    {
-        imag: 5.811323644522304e-16,
-        real: 1.0928757898653885e-16,
-    },
-    {
-        imag: -9.419548474554063e-16,
-        real: -1.5439038936193583e-16,
-    },
-    {
-        imag: -1.474514954580286e-16,
-        real: -5.030698080332741e-16,
-    },
-    {
-        imag: 4.675079767757495e-16,
-        real: -7.979727989493313e-17,
-    },
-    {
-        imag: -1.9168694409543718e-16,
-        real: -5.065392549852277e-16,
-    },
-    {
-        imag: 2.0383000842727483e-16,
-        real: -2.203098814490545e-16,
-    },
-    {
-        imag: 9.540979117872439e-17,
-        real: -3.365363543395006e-16,
-    },
-    {
-        imag: -1.0972125985553305e-16,
-        real: -4.0245584642661925e-16,
-    },
-    {
-        imag: -1.4042586538032253e-15,
-        real: -7.424616477180734e-16,
-    },
-    {
-        imag: 2.2638141361497333e-16,
-        real: -9.384854005034526e-16,
-    },
-    {
-        imag: 1.0972125985553305e-16,
-        real: 4.2674197509029455e-16,
-    },
-    {
-        imag: -3.8424124992886277e-16,
-        real: -1.3357370765021415e-16,
-    },
-    {
-        imag: 5.720250662033521e-16,
-        real: 6.245004513516506e-16,
-    },
-    {
-        imag: -4.2609145378680324e-16,
-        real: 5.048045315092509e-16,
-    },
-    {
-        imag: 3.3263322651855276e-16,
-        real: -4.0419056990259605e-16,
-    },
-    {
-        imag: -6.310056643865636e-17,
-        real: -2.636779683484747e-16,
-    },
-    {
-        imag: -2.0383000842727483e-17,
-        real: -4.614364446098307e-16,
-    },
-    {
-        imag: -1.6859343782149594e-16,
-        real: -3.8163916471489756e-16,
-    },
-    {
-        imag: 8.365703962898152e-16,
-        real: -6.765421556309548e-17,
-    },
-    {
-        imag: -4.382251374778757e-17,
-        real: -6.938893903907228e-18,
-    },
-    {
-        imag: 8.972857179490035e-16,
-        real: 2.914335439641036e-16,
-    },
-    {
-        imag: -9.423885283244005e-16,
-        real: -2.7755575615628914e-16,
-    },
-];
+const CANVAS_HEIGHT = 500;
+const CANVAS_WIDTH = 500;
+type APIResponseType = {
+    fourier_coefs: Complex[]
+}
 
 function App() {
+    const [writeEnable, setWriteEnable] = useState(true);
+    const [requestSuccess, setRequestSuccess] = useState(false);
+    const [pointsOfPath, setPointsOfPath] = useState(new Array<Complex>());
+    const [fourierCoefs, setFourierCoefs] = useState(new Array<Complex>());
+    
+    const handleSubmitClick = () => {
+        setRequestSuccess(false);
+        setWriteEnable(false);
+    }
+
+    const handleDrawAgainClick = () => {
+        setWriteEnable(true);
+    }
+
+    const convertPointList = (canvasPointList: CanvasPoint[]) => {
+        let convertedPoints = new Array<Complex>();
+        for (let i = 0; i < canvasPointList.length; i++) {
+            let point = getPointFromCanvasPoint(canvasPointList[i], CANVAS_WIDTH, CANVAS_HEIGHT);
+            convertedPoints.push({real: point.x, imag: point.y});
+        }
+        setPointsOfPath(convertedPoints);
+    }
+
+    useEffect(() => {
+        if (writeEnable === true) {
+            setRequestSuccess(false);
+            // Only do when writeEnable has been restored
+            // Axios request
+            const getFourierCoefs = async () => {
+                try {
+                    const res: AxiosResponse<APIResponseType> = await axios({
+                        url: "/api/fourier", 
+                        method: "POST", 
+                        data: {
+                            path: pointsOfPath
+                        }
+                    });
+                    console.log(res)
+                    const data = res.data;
+                    if (data) {
+                        setFourierCoefs(data.fourier_coefs);
+                        console.log(data)
+                    }
+                } catch (err) {
+                    console.log(err.response);
+                }
+            }
+            getFourierCoefs().then(() => setRequestSuccess(true));
+        }
+    }, [writeEnable, pointsOfPath]);
+
     return (
         <div className="App">
-            <ReadOnlyCanvas fourierCoefs={f_points} width={500} height={500} />
+            {writeEnable ? 
+            <div>
+                <div>
+                    <WriteOnlyCanvas convertPointList={convertPointList} width={CANVAS_WIDTH} height={CANVAS_HEIGHT}/>
+                </div>
+                {requestSuccess && <button onClick={() => handleSubmitClick()}>Submit</button>}
+            </div>
+            :
+            <div>
+                {fourierCoefs.length > 0 &&                 
+                <ReadOnlyCanvas fourierCoefs={fourierCoefs} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />}
+                <button onClick={() => handleDrawAgainClick()}>Draw again</button>
+            </div>}
         </div>
     );
 }

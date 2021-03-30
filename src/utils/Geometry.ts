@@ -28,7 +28,7 @@ export class Point {
         this.y = y;
     }
 
-    getCanvasCoordinates(canvasWidth:number, canvasHeight:number) {
+    getCanvasCoordinates(canvasWidth:number, canvasHeight:number) : CanvasPoint {
         return {
             u: canvasWidth/2+this.x,
             v: canvasHeight/2-this.y
@@ -39,4 +39,10 @@ export class Point {
         return new Point(this.x+v.x, this.y + v.y);
     }
 
+}
+
+export type CanvasPoint = {u:number, v:number};
+
+export function getPointFromCanvasPoint(cp: CanvasPoint, canvasWidth: number, canvasHeight: number) {
+    return new Point(cp.u-canvasWidth/2, canvasHeight/2 - cp.v);
 }

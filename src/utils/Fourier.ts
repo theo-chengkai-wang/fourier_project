@@ -2,6 +2,8 @@ import {Vector, Point} from "./Geometry";
 
 export const THRESHOLD = 1e-7;
 
+export type Complex = {real:number, imag: number};
+
 /**
  * Wrapper class for Fourier vectors
  * @property vectors: array of current Fourier vectors
@@ -14,7 +16,7 @@ export default class Fourier {
     maxN: number; 
     baseFrequency: number; // Number of cycles per second.
 
-    constructor(fourier_coefs: Array<{real:number, imag: number}>, maxN:number, baseFrequency:number) {
+    constructor(fourier_coefs: Array<Complex>, maxN:number, baseFrequency:number) {
         // assert(maxN*2+1 === fourier_coefs.length);
         this.maxN = maxN;
         this.baseFrequency = baseFrequency;
