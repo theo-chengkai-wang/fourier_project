@@ -4,24 +4,21 @@ import {CanvasPoint} from '../utils/Geometry';
 import Fourier, {Complex} from '../utils/Fourier';
 import AnimatedCanvas from './AnimatedCanvas';
 
+/**
+ * @field fourierCoefs: fourierCoefficients 
+ * @field width: width of canvas in px
+ * @field height: height of canvas in px.
+ */
 export type ReadOnlyCanvasProps = {
     fourierCoefs: Array<Complex>;
     width: number; 
     height: number;
 };
 
-const POINT_HISTORY_MAX_DISPLAY = 10000;
-
-// const pointHistoryInitializer = () => {
-//     let ph = new Array<CanvasPoint>(POINT_HISTORY_MAX_DISPLAY);
-//     for (let i = 0; i < ph.length; i++) {
-//         ph[i] = {u: -1, v: -1};
-//     }
-//     return ph;
-// }
+const POINT_HISTORY_MAX_DISPLAY = 1000;
 
 export default function ReadOnlyCanvas({fourierCoefs, width, height}: ReadOnlyCanvasProps) {
-    let fourier = useRef(new Fourier(fourierCoefs, 50, 1 / 5));
+    let fourier = useRef(new Fourier(fourierCoefs, (fourierCoefs.length-1)/2, 1 / 5));
     const pointHistoryRef = useRef<CanvasPoint[]>(new Array<CanvasPoint>(POINT_HISTORY_MAX_DISPLAY));
     let draw = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, progress: number, frameLength: number) => {
         // Frame length is in milliseconds so let's do the conversion first.
@@ -42,10 +39,6 @@ export default function ReadOnlyCanvas({fourierCoefs, width, height}: ReadOnlyCa
             }
         }
         ctx.stroke()
-        // ctx.fillStyle = "blue";
-        // for (let {u, v} of pointHistoryRef.current) {
-        //     ctx.fillRect()
-        // }
         // Draw vectors
         for (let i = 1; i < points.length; i++) {
             ctx.beginPath();

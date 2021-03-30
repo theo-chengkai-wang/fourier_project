@@ -9,9 +9,10 @@ export type WriteOnlyCanvasProps = {
 };
 
 export default function WriteOnlyCanvas({convertPointList, width, height}: WriteOnlyCanvasProps) {
-    const [drawing, setDrawing] = useState(false);
-    const pointListRef = useRef<CanvasPoint[]>([]);
+    const [drawing, setDrawing] = useState(false); // Set to true if we are drawing
+    const pointListRef = useRef<CanvasPoint[]>([]); // Ref to the list of points we have currently drawn
 
+    // Handle Canvas drawing
     const handleMouseDown:React.MouseEventHandler<HTMLCanvasElement> = (event) => {
         // Clean up previous point list
         pointListRef.current = [];
@@ -36,7 +37,9 @@ export default function WriteOnlyCanvas({convertPointList, width, height}: Write
         convertPointList(pointListRef.current);
     }
     
+    // Draw function for AnimatedCanvas when we ARE drawing. 
     const draw = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, progress: number, frameLength: number) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle="white";
         ctx.beginPath();
         for (let i = 1; i < pointListRef.current.length; i++) {
@@ -47,7 +50,8 @@ export default function WriteOnlyCanvas({convertPointList, width, height}: Write
         }
         ctx.stroke();
     }
-
+    // BackgroundDraw function called only if we AREN'T DRAWING anymore, so no need to update anymore. We 
+    // turn the mode of the canvas to static and apply this function. 
     const backgroundDraw = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
         ctx.strokeStyle="white";
         ctx.beginPath();

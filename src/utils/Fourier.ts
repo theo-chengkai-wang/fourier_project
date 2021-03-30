@@ -1,6 +1,6 @@
 import {Vector, Point} from "./Geometry";
 
-export const THRESHOLD = 1e-7;
+export const THRESHOLD = 1e-15;
 
 export type Complex = {real:number, imag: number};
 
@@ -26,7 +26,6 @@ export default class Fourier {
         for (let i = 1; i <= maxN; i++) {
             let c_n_real = (Math.abs(fourier_coefs[2*i-1].real) > THRESHOLD) ? fourier_coefs[2*i-1].real:0;
             let c_n_imag =  (Math.abs(fourier_coefs[2*i-1].imag) > THRESHOLD) ? fourier_coefs[2*i-1].imag:0;
-            
             if (c_n_real !== 0 || c_n_imag !== 0) {
                 // c_n 
                 this.vectors.push(new Vector(
