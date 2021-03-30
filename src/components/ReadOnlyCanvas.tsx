@@ -15,7 +15,7 @@ export type ReadOnlyCanvasProps = {
     height: number;
 };
 
-const POINT_HISTORY_MAX_DISPLAY = 1000;
+const POINT_HISTORY_MAX_DISPLAY = 2000;
 
 export default function ReadOnlyCanvas({fourierCoefs, width, height}: ReadOnlyCanvasProps) {
     let fourier = useRef(new Fourier(fourierCoefs, (fourierCoefs.length-1)/2, 1 / 5));
