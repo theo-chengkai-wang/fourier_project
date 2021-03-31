@@ -3,7 +3,7 @@ from svg.path import parse_path
 from exceptions import MathematicalError
 
 
-def integrate(f, interval=(0, 1), delta_t=0.01):
+def integrate(f, interval=(0, 1), delta_t=0.001):
     assert interval[1] > interval[0]
     assert (interval[1] - interval[0]) / 2 >= delta_t > 0
     sum_integral = 0
@@ -30,7 +30,7 @@ def integrate_time_series(ts, interval=(0, 1)):
 
 # Returns an array [c_0, c_1, c_{-1}, c_2, c_{-2}, ... c_50, c_{-50}...],
 # where c_n is at position 2n-1, and c_-n at position 2n
-def fourier(f, interval=(0, 1), max_n=50, delta_t=0.01):
+def fourier(f, interval=(0, 1), max_n=50, delta_t=0.001):
     assert interval[1] > interval[0]
     fourier_coefficients = [0 for _ in range(2 * max_n + 1)]
     L = (interval[1] - interval[0]) / 2

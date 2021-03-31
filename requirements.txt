@@ -1,0 +1,12 @@
+attrs==20.3.0
+click==7.1.2
+Flask==1.1.2
+flask-expects-json==1.5.0
+itsdangerous==1.1.0
+Jinja2==2.11.3
+jsonschema==3.2.0
+MarkupSafe==1.1.1
+pyrsistent==0.17.3
+six==1.15.0
+svg.path==4.1
+Werkzeug==1.0.1
