@@ -21,11 +21,11 @@ export default function WriteOnlyCanvas({convertPointList, width, height}: Write
         // Clear canvas
         event.currentTarget.getContext("2d")?.clearRect(0, 0, event.currentTarget.width, event.currentTarget.height);
         // Push point
-        pointListRef.current.push({u: event.clientX, v: event.clientY});
+        pointListRef.current.push({u: event.nativeEvent.offsetX, v: event.nativeEvent.offsetY});
     }
 
     const handleMouseMove:React.MouseEventHandler<HTMLCanvasElement> = (event) => {
-        pointListRef.current.push({u: event.clientX, v: event.clientY});
+        pointListRef.current.push({u: event.nativeEvent.offsetX, v: event.nativeEvent.offsetY});
     }
 
     const handleMouseUp:React.MouseEventHandler<HTMLCanvasElement> = (event) => {
@@ -39,8 +39,8 @@ export default function WriteOnlyCanvas({convertPointList, width, height}: Write
     
     // Draw function for AnimatedCanvas when we ARE drawing. 
     const draw = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, progress: number, frameLength: number) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle="white";
+        ctx.lineWidth=2;
         ctx.beginPath();
         for (let i = 1; i < pointListRef.current.length; i++) {
             let lastPoint = pointListRef.current[i-1];
@@ -68,7 +68,8 @@ export default function WriteOnlyCanvas({convertPointList, width, height}: Write
         <AnimatedCanvas 
             draw={draw}
             animate={drawing} 
-            backgroundDraw={drawing ? (ctx, canvas) => {}: backgroundDraw} 
+            backgroundDraw={drawing ? (ctx, canvas) => {}: backgroundDraw}
+            preDraw={(ctx, canvas) => {ctx.clearRect(0, 0, canvas.width, canvas.height)}}
             options={{
                 width: `${width}px`, 
                 height: `${height}px`,

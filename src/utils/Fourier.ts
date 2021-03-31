@@ -1,8 +1,15 @@
 import {Vector, Point} from "./Geometry";
 
-export const THRESHOLD = 1e-15;
+export const THRESHOLD = 1e-7;
 
 export type Complex = {real:number, imag: number};
+
+export function complexPointToCanvasPoint(c: Complex, canvasWidth:number, canvasHeight:number) {
+    return {
+        u: canvasWidth/2+c.real,
+        v: canvasHeight/2-c.imag
+    };
+}
 
 /**
  * Wrapper class for Fourier vectors
@@ -17,6 +24,7 @@ export default class Fourier {
     baseFrequency: number; // Number of cycles per second.
 
     constructor(fourier_coefs: Array<Complex>, maxN:number, baseFrequency:number) {
+        console.log(fourier_coefs.length)
         // assert(maxN*2+1 === fourier_coefs.length);
         this.maxN = maxN;
         this.baseFrequency = baseFrequency;

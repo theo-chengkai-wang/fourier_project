@@ -1,4 +1,5 @@
 /**
+ * @deprecated
  * THOUGHT WAS USEFUL, ACTUALLY NOT USEFUL AT ALL
  * Works only with 3*3 matrices
  * Initialize with a 3*3 array of arrays of numbers.
