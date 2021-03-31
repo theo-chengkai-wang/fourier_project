@@ -1,10 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import logo from "./logo.svg";
+import React, { useCallback, useState } from "react";
 import "./App.css";
-import { CanvasPoint, Point, getPointFromCanvasPoint } from "./utils/Geometry";
+import { CanvasPoint, getPointFromCanvasPoint } from "./utils/Geometry";
 import ReadOnlyCanvas from "./components/ReadOnlyCanvas";
-import Fourier, {Complex} from "./utils/Fourier";
-import AnimatedCanvas from "./components/AnimatedCanvas";
+import {Complex} from "./utils/Fourier";
 import WriteOnlyCanvas from "./components/WriteOnlyCanvas";
 import axios, { AxiosResponse } from "axios";
 

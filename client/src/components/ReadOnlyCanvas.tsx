@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react';
-import {useRef, useState, useEffect} from 'react';
+import {useRef, useEffect} from 'react';
 import {CanvasPoint} from '../utils/Geometry';
 import Fourier, {Complex, complexPointToCanvasPoint} from '../utils/Fourier';
 import AnimatedCanvas from './AnimatedCanvas';
